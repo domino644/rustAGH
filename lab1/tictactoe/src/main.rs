@@ -2,21 +2,32 @@ use std::io;
 
 fn main() {
     let mut user_input: String = String::new();
-    let mut row: usize; // place for the row number
-    let mut col: usize; // place for the column number
+    let mut row: i32; // place for the row number
+    let mut col: i32; // place for the column number
     let mut turn: u8 = 0;
     let mut board: [[char; 3]; 3] = [[' '; 3]; 3];
     while !check_board(board) && turn < 9 {
         println!("Type your command:");
+        user_input.clear();
         let _ = io::stdin().read_line(&mut user_input); // get string from the user input
-        row = user_input.chars().nth(0).expect("Too few arguments") as usize; // get the first char from the given string
-        col = user_input.chars().nth(1).expect("Too few arguments") as usize; // get the second char from the given string
-        if row < 0 || row > 2 || col < 0 || row > 2 {
+        row = user_input
+            .chars()
+            .filter(|c| !c.is_whitespace())
+            .nth(0)
+            .expect("Too few arguments") as i32
+            - 0x30; // get the first char from the given string
+        col = user_input
+            .chars()
+            .filter(|c| !c.is_whitespace())
+            .nth(1)
+            .expect("Too few arguments") as i32
+            - 0x30; // get the second char from the given string
+        if row > 2 || col > 2 {
             panic!(
                 "Wrong dimensions... We play tic tac toe at 3x3 board and we start indexing at 0"
             );
         }
-        board[row][col] = if turn % 2 == 0 { 'O' } else { 'X' };
+        board[row as usize][col as usize] = if turn % 2 == 0 { 'O' } else { 'X' };
         print_board(board);
         turn = turn + 1;
     }
